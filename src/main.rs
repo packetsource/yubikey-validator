@@ -1,5 +1,6 @@
 #![allow(unused)]
 
+use std::io::Write;
 use whoami;
 use lazy_static::lazy_static;
 
@@ -20,6 +21,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut otp = String::new();
     if CONFIG.args.len()==0 {
+        print!("Please enter OTP: ");
+        std::io::stdout().flush()?;
         std::io::stdin().read_line(&mut otp)?;
     } else {
         otp = CONFIG.args.get(0).unwrap().clone();

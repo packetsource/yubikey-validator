@@ -77,17 +77,28 @@ impl YubikeyStore {
                 split(":").
                 collect::<Vec<&str>>();
 
-            // TODO: If there is something botched in the shadow line format
-            // we shouldn't bail here. We should log an error, and ignore the
-            // entry.
+            // We should have at least four tokens. The counters can default to zero
+            // on initial use
             if tokens.len()>=4 {
                 self.keys.push( Yubikey {
                     local_username: tokens[0].to_string(),
                     public_id: tokens[1].to_string(),
-                    private_id: YubikeyPrivateIdentity::from_str(tokens[2])?,
-                    encryption_key: YubikeyAesKey::from_str(tokens[3])?,
-                    last_usage_count: tokens.get(4).unwrap_or(&"0").parse::<u16>()?,
-                    last_session_count: tokens.get(5).unwrap_or(&"0").parse::<u8>()?
+                    private_id: match YubikeyPrivateIdentity::from_str(tokens[2]) {
+                        Ok(i) => i,
+                        Err(_) => continue
+                    },
+                    encryption_key: match YubikeyAesKey::from_str(tokens[3]) {
+                        Ok(k) => k,
+                        Err(_) => continue
+                    },
+                    last_usage_count: match tokens.get(4).unwrap_or(&"0").parse::<u16>() {
+                        Ok(n) => n,
+                        Err(_) => continue
+                    },
+                    last_session_count: match tokens.get(5).unwrap_or(&"0").parse::<u8>() {
+                        Ok(n) => n,
+                        Err(_) => continue
+                    }
                 });
             }
         }
