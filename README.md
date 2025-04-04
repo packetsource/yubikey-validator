@@ -19,6 +19,8 @@ more details.
 
 ### Installation steps
 
+- Install any build dependencies:
+  - PAM development library (`libpam0g-dev` on Ubuntu/Debian)
 - Compile using ```cargo build --release```
 - Install the shared library into an appropriate folder that the PAM clients can load:
 
@@ -59,6 +61,7 @@ $ yubikey-validator
 Please enter OTP: vvccccbcjkhjgirvuernvibvfettjuhbjnkkcvglfebi
 Parsed OTP: YubikeyOtp { public_id: "vvccccbcjkhj", private_id: YubikeyPrivateIdentity([179, 103, 15, 110, 41, 228]), counter: 7, timestamp: [248, 86, 134], session_counter: 0, random: 47932, crc: 48388 }
 ```
+
 
 ## Security Considerations
 
