@@ -47,7 +47,7 @@ Using a randomly generated secret key: 41539f79378b1ce36fd71057ce6c1d79
 ```
 - Store this, colon-separated, in `/etc/shadow.yk` thus (no space indent):
 ```
-- username:vvccccbcjkhj:b3670f6e29e4:41539f79378b1ce36fd71057ce6c1d79"
+- username:vvccccbcjkhj:b3670f6e29e4:41539f79378b1ce36fd71057ce6c1d79
 ```
 
 ## Testing
