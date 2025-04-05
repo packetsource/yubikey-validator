@@ -27,14 +27,6 @@ more details.
 ```
 sudo cp target/release/libpam_yubikey.so /usr/lib/$(cc -dumpmachine)/security/pam_yubikey.so
 ```
-- Reference the PAM module in the context that you would like to use it. You can do this in several ways, 
-and it may be advisible to consult the PAM man pages to do it, but if you only want to bind the authentication
-to a single function, say TACACS+ which uses a service name of `tac_plus`, simply add the following
-to a new line within ```/etc/pam.d/tac_plus```:
-
-```
-auth required pam_yubikey.so
-```
 
 - Generate an identity pair and AES secret on a Yubikey using the `yk-man` utility:
 
@@ -60,6 +52,28 @@ step from the command line, operating on a local `shadow.yk` file.
 $ yubikey-validator
 Please enter OTP: vvccccbcjkhjgirvuernvibvfettjuhbjnkkcvglfebi
 Parsed OTP: YubikeyOtp { public_id: "vvccccbcjkhj", private_id: YubikeyPrivateIdentity([179, 103, 15, 110, 41, 228]), counter: 7, timestamp: [248, 86, 134], session_counter: 0, random: 47932, crc: 48388 }
+```
+
+## Configuring with PAM
+
+- Reference the PAM module in the context that you would like to use it. You can do this in several ways,
+  and it may be advisable to consult the PAM man pages to do it.
+
+- if you only want to bind the authentication to a single function, say TACACS+ which uses a service name
+of `tac_plus`, simply add the following to a new line within `/etc/pam.d/tac_plus`:
+
+```
+auth required pam_yubikey.so
+```
+
+- Alternatively, modifying the `/etc/pam.d/common-auth` is a good way to substitute
+all typical password based logins with the Yubikey validation check, eg. sudo, console
+login, ssh with password (assuming UsePAM=yes). Make the following modification,
+  (commenting out the classic pam_unix.so module)
+
+```
+auth	[success=1 default=ignore]	pam_yubikey.so
+#auth	[success=1 default=ignore]	pam_unix.so nullok
 ```
 
 
