@@ -28,7 +28,9 @@ more details.
 sudo cp target/release/libpam_yubikey.so /usr/lib/$(cc -dumpmachine)/security/pam_yubikey.so
 ```
 
-- Generate an identity pair and AES secret on a Yubikey using the `yk-man` utility:
+- Generate an identity pair and AES secret on a Yubikey using the `yk-man` utility
+  (available for download, see instructions at https://docs.yubico.com/software/yubikey/tools/ykman/Install_ykman.html,
+or `pip install yubikey-manager`)
 
 ```
 # Generate a serial-number based public identity, random
