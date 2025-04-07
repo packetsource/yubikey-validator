@@ -3,6 +3,7 @@ use std::io::{BufRead, BufReader};
 use std::cmp::PartialEq;
 use std::fs::OpenOptions;
 use std::io::Write;
+use std::os::unix::fs::PermissionsExt;
 
 use hex::FromHex;
 use aes::Aes128;
@@ -111,6 +112,11 @@ impl YubikeyStore {
             create(true).
             truncate(true).
             open(&filename)?;
+
+        // Set the permissions for rw by owner only
+        let mut permissions = file.metadata()?.permissions();
+        permissions.set_mode(0o600u32);
+
         for yubikey in &self.keys {
             let _ = writeln!(file, "{}:{}:{}:{}:{}:{}",
                              yubikey.local_username,
@@ -122,6 +128,7 @@ impl YubikeyStore {
             );
         }
         std::fs::rename(&filename, &self.filename)?;
+
         Ok(())
     }
 
