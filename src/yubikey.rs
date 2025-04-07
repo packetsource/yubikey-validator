@@ -107,26 +107,29 @@ impl YubikeyStore {
     }
     pub fn save(&self) -> Result<(), Box<dyn std::error::Error>> {
         let filename: String = format!("{}.tmp.{}", self.filename, std::process::id());
-        let mut file: File = OpenOptions::new().
-            write(true).
-            create(true).
-            truncate(true).
-            open(&filename)?;
+        {
+            let mut file: File = OpenOptions::new().
+                write(true).
+                create(true).
+                truncate(true).
+                open(&filename)?;
 
-        // Set the permissions for rw by owner only
-        let mut permissions = file.metadata()?.permissions();
-        permissions.set_mode(0o600u32);
+            // Set the permissions for rw by owner only
+            file.set_permissions(PermissionsExt::from_mode(0o600u32));
 
-        for yubikey in &self.keys {
-            let _ = writeln!(file, "{}:{}:{}:{}:{}:{}",
-                             yubikey.local_username,
-                             yubikey.public_id,
-                             hex::encode(&yubikey.private_id.0),
-                             hex::encode(&yubikey.encryption_key.0),
-                             yubikey.last_usage_count,
-                             yubikey.last_session_count
-            );
+            for yubikey in &self.keys {
+                let _ = writeln!(file, "{}:{}:{}:{}:{}:{}",
+                                 yubikey.local_username,
+                                 yubikey.public_id,
+                                 hex::encode(&yubikey.private_id.0),
+                                 hex::encode(&yubikey.encryption_key.0),
+                                 yubikey.last_usage_count,
+                                 yubikey.last_session_count
+                );
+            }
         }
+
+        // Close the file before doing the rename
         std::fs::rename(&filename, &self.filename)?;
 
         Ok(())
